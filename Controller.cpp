@@ -28,11 +28,17 @@ void Controller::initialiseSensors() {
 }
 
 void Controller::defineHeater(uint8_t pin) {
-	
+	if (heater) {
+    delete heater;
+  }
+  heater = new Heater(pin);
 }
 
 void Controller::defineHumidifier(uint8_t pin) {
-	
+	if (humidifier) {
+    delete humidifier;
+  }
+  humidifier = new Humidifier(pin);
 }
 
 void Controller::defineBuzzer(uint8_t pin) {

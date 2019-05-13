@@ -21,9 +21,10 @@ void setup() {
 	puLogger->defineBME280Sensors(SENSORADDRESSES, SENSORCOUNT);
 	puLogger->initialiseSensors();
   puLogger->defineBuzzer(BUZZERPIN);
+  puLogger->defineHumidifier(FANPIN);
+  puLogger->defineHeater(HEATPIN);
 }
 
 void loop() { 
-  puLogger->beep();
-	delay(5000);
+  
 }
