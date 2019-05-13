@@ -1,6 +1,6 @@
 #include "Controller.h"
 
-Controller::Controller(): sensors(nullptr), sensorsCount(0), heater(nullptr), humidifier(nullptr){
+Controller::Controller(): sensors(nullptr), sensorsCount(0), heater(nullptr), humidifier(nullptr), buzzer(nullptr){
   
 }
 	
@@ -27,14 +27,24 @@ void Controller::initialiseSensors() {
 	}
 }
 
-void Controller::addHeater(uint8_t pin) {
+void Controller::defineHeater(uint8_t pin) {
 	
 }
 
-void Controller::addHumidifier(uint8_t pin) {
+void Controller::defineHumidifier(uint8_t pin) {
 	
 }
 
-void Controller::addBuzzer(uint8_t pin) {
-	
+void Controller::defineBuzzer(uint8_t pin) {
+	if (buzzer) {
+    delete buzzer;
+	}
+  buzzer = new Buzzer(pin);
 }
+
+void Controller::beep() {
+  if (buzzer) {
+    buzzer->beep();
+  }
+}
+

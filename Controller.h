@@ -5,6 +5,7 @@
 #include "BME280Sensor.h"
 #include "Heater.h"
 #include "Humidifier.h"
+#include "Buzzer.h"
 
 
 class Controller {
@@ -13,14 +14,17 @@ public:
 	uint8_t sensorsCount;
 	Heater* heater;
 	Humidifier* humidifier;
+  Buzzer* buzzer;
 	
 public:
   Controller();
-	void defineBME280Sensors(uint8_t* addressArray, uint8_t sensorsCount);
+	void defineBME280Sensors(uint8_t* defineressArray, uint8_t sensorsCount);
 	void initialiseSensors();
-	void addHeater(uint8_t pin);
-	void addHumidifier(uint8_t pin);
-	void addBuzzer(uint8_t pin);
+	void defineHeater(uint8_t pin);
+	void defineHumidifier(uint8_t pin);
+	void defineBuzzer(uint8_t pin);
+
+  void beep();
 };
 
 #endif

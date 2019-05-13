@@ -4,6 +4,10 @@
 
 const uint8_t SENSORCOUNT = 2;
 uint8_t SENSORADDRESSES[SENSORCOUNT] = {0x77, 0x76};
+const int BUZZERPIN = 2;
+const int FANPIN = 5;
+const int HEATPIN = 4;
+
 
 Controller* puLogger = nullptr;
 
@@ -16,13 +20,10 @@ void setup() {
 	
 	puLogger->defineBME280Sensors(SENSORADDRESSES, SENSORCOUNT);
 	puLogger->initialiseSensors();
+  puLogger->defineBuzzer(BUZZERPIN);
 }
 
-void loop() {
-	puLogger->sensors[0].getTemperature();
-	puLogger->sensors[0].getHumidity();
-	puLogger->sensors[1].getTemperature(); 
-  puLogger->sensors[1].getHumidity();	
-  Serial.print("\n");
+void loop() { 
+  puLogger->beep();
 	delay(5000);
 }

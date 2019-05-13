@@ -1,0 +1,12 @@
+#ifndef BUZZER
+#define BUZZER
+
+#include "DigitalOutputDevice.h"
+
+class Buzzer: public DigitalOutputDevice {
+public:
+	Buzzer(uint8_t pin);
+	void beep();
+};
+
+#endif

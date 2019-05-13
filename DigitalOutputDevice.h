@@ -5,7 +5,7 @@
 #include <Arduino.h>
 
 class DigitalOutputDevice {
-private:
+protected:
 	uint8_t pin;
 
 public:
