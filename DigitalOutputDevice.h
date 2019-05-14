@@ -10,6 +10,8 @@ protected:
 
 public:
 	DigitalOutputDevice(uint8_t pin);
+ 
+  void controlOutput(bool state);
 	void activate();
 	void deactivate();
 };

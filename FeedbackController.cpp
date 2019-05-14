@@ -3,7 +3,7 @@
 #include <Arduino.h>
 
 FeedbackController::FeedbackController(bool inverselyProportional, bool pwmOutput, int controlPeriod)
-: inputs(nullptr), outputs(nullptr), latestSensorData(nullptr), inputCount(0), outputCount(0),
+: inputSensors(nullptr), getter(nullptr), outputDevices(nullptr), latestSensorData(nullptr), inputCount(0), outputCount(0),
 	upperBound(), lowerBound(), setpoint(0.0), hysteresis(0.0),
 	currentControlState(false), inverselyProportional(inverselyProportional), pwmOutput(pwmOutput), controlPeriod(controlPeriod) {
 	
@@ -29,42 +29,34 @@ void FeedbackController::setHysteresis(double hysteresis) {
   poll();
 }
 
-void FeedbackController::defineInputs(input* inputs, uint8_t inputCount){
-
-	if (this->inputs) {
-		delete this->inputs;
-	}
+void FeedbackController::defineInputs(BME280Sensor* inputSensors, uint8_t inputCount, sensorFunction getter){
 
  if (this->latestSensorData) {
    delete latestSensorData;
   }
-  
+
+  this->inputSensors = inputSensors;
 	this->inputCount = inputCount;
-	(*this).inputs = new input [inputCount];
+  this->getter = getter;
   this->latestSensorData = new double [inputCount];
   
 	for (int i = 0; i < inputCount; i++) {
-		this->inputs[i] = inputs[i];
     this->latestSensorData[i] = 0.0;
 	}
 }
 
-void FeedbackController::defineOutputs(output* outputs, uint8_t outputCount){
-	if (this->outputs) {
-    delete this->outputs;
-  }
-  
+void FeedbackController::defineOutputs(DigitalOutputDevice* outputDevices, uint8_t outputCount){
+	this->outputDevices = outputDevices;
   this->outputCount = outputCount;
-  (*this).outputs = new output [outputCount];
+  
   for (int i = 0; i < outputCount; i++) {
-    this->outputs[i] = outputs[i];
-    outputs[i](this->currentControlState);
+    outputDevices[i].controlOutput(this->currentControlState);
   }
 }
 
 void FeedbackController::poll(){
   for (int i = 0; i < inputCount; i++) {
-    this->latestSensorData[i] = inputs[i]();
+    this->latestSensorData[i] = (inputSensors[i].*(((FeedbackController*)this)->FeedbackController::getter))();
   }
 
   controlOutputs();
@@ -72,32 +64,26 @@ void FeedbackController::poll(){
 
 void FeedbackController::controlOutputs() {
   bool controlState = currentControlState;
-  Serial.print("Heat is currently ");
-  Serial.println(currentControlState ? "on" : "off");
 
     //prepare to drive output based on average reading vs setpoint
   if (getAvgValue() < (this->setpoint - this->hysteresis)) {
-    Serial.println("Temp low, turn on heat");
     controlState = this->inverselyProportional ? false : true;
   }
   else if (getAvgValue() > (this->setpoint + this->hysteresis)) {
-    Serial.println("Temp high, turn off heat");
     controlState = this->inverselyProportional ? true : false;
   }
 
     //apply upper/lower bounds, giving priority to upper bound
   if (this->lowerBound.isSet && getMinValue() < this->lowerBound.value) {
-    Serial.println("Applying lower bound");
     controlState = this->inverselyProportional ? false : true;
   }
   else if (this->upperBound.isSet && getMaxValue() > this->upperBound.value) {
-    Serial.println("Applying upper bound");
     controlState = this->inverselyProportional ? true : false;
   }
 
   this->currentControlState = controlState;
   for (int i = 0; i < this->outputCount; i++) {
-    outputs[i](controlState);
+    outputDevices[i].controlOutput(controlState);
   }
 }
 
