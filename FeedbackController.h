@@ -2,6 +2,7 @@
 #define FEEDBACKCONTROLLER
 
 #include <stdint.h>
+#include "Bound.h"
 
 typedef double (*input)();
 typedef void (*output)(bool state);
@@ -15,10 +16,12 @@ class FeedbackController {
 	uint8_t inputCount;
 	uint8_t outputCount;
 	
-	double upperBound;
-	double lowerBound;
+	Bound upperBound;
+	Bound lowerBound;
 	double setpoint;
-	
+  double hysteresis;
+
+  bool currentControlState;
 	bool inverselyProportional;
 	bool pwmOutput;
 	int controlPeriod;
@@ -26,13 +29,16 @@ class FeedbackController {
 	public:
 	FeedbackController(bool inverselyProportional, bool pwmOutput, int controlPeriod);
 	
-	void setUpperBound(double upperBound);
-	void setLowerBound(double lowerBound);
+	void setUpperBound(double value);
+	void setLowerBound(double value);
 	void setSetpoint(double setpoint);
+  void setHysteresis(double hysteresis);
+  
 	
 	void defineInputs(input* inputs, uint8_t inputCount);
 	void defineOutputs(output* inputs, uint8_t outputCount);
 	void poll();
+  void controlOutputs();
 	
 	double getMaxValue();
 	double getAvgValue();

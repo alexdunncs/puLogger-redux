@@ -4,24 +4,29 @@
 
 FeedbackController::FeedbackController(bool inverselyProportional, bool pwmOutput, int controlPeriod)
 : inputs(nullptr), outputs(nullptr), latestSensorData(nullptr), inputCount(0), outputCount(0),
-	upperBound(0.0), lowerBound(0.0), setpoint(0.0),
-	inverselyProportional(inverselyProportional), pwmOutput(pwmOutput), controlPeriod(controlPeriod) {
+	upperBound(), lowerBound(), setpoint(0.0), hysteresis(0.0),
+	currentControlState(false), inverselyProportional(inverselyProportional), pwmOutput(pwmOutput), controlPeriod(controlPeriod) {
 	
 }
 
-void FeedbackController::setUpperBound(double upperBound){
-	this->upperBound = upperBound;
+void FeedbackController::setUpperBound(double value){
+	this->upperBound = Bound(value);
 	poll();
 }
 
-void FeedbackController::setLowerBound(double lowerBound){
-	this->lowerBound = lowerBound;
+void FeedbackController::setLowerBound(double value){
+	this->lowerBound = Bound(value);
 	poll();
 }
 	
 void FeedbackController::setSetpoint(double setpoint){
 	this->setpoint = setpoint;
 	poll();
+}
+
+void FeedbackController::setHysteresis(double hysteresis) {
+  this->hysteresis = hysteresis;
+  poll();
 }
 
 void FeedbackController::defineInputs(input* inputs, uint8_t inputCount){
@@ -53,12 +58,46 @@ void FeedbackController::defineOutputs(output* outputs, uint8_t outputCount){
   (*this).outputs = new output [outputCount];
   for (int i = 0; i < outputCount; i++) {
     this->outputs[i] = outputs[i];
+    outputs[i](this->currentControlState);
   }
 }
 
 void FeedbackController::poll(){
   for (int i = 0; i < inputCount; i++) {
     this->latestSensorData[i] = inputs[i]();
+  }
+
+  controlOutputs();
+}
+
+void FeedbackController::controlOutputs() {
+  bool controlState = currentControlState;
+  Serial.print("Heat is currently ");
+  Serial.println(currentControlState ? "on" : "off");
+
+    //prepare to drive output based on average reading vs setpoint
+  if (getAvgValue() < (this->setpoint - this->hysteresis)) {
+    Serial.println("Temp low, turn on heat");
+    controlState = this->inverselyProportional ? false : true;
+  }
+  else if (getAvgValue() > (this->setpoint + this->hysteresis)) {
+    Serial.println("Temp high, turn off heat");
+    controlState = this->inverselyProportional ? true : false;
+  }
+
+    //apply upper/lower bounds, giving priority to upper bound
+  if (this->lowerBound.isSet && getMinValue() < this->lowerBound.value) {
+    Serial.println("Applying lower bound");
+    controlState = this->inverselyProportional ? false : true;
+  }
+  else if (this->upperBound.isSet && getMaxValue() > this->upperBound.value) {
+    Serial.println("Applying upper bound");
+    controlState = this->inverselyProportional ? true : false;
+  }
+
+  this->currentControlState = controlState;
+  for (int i = 0; i < this->outputCount; i++) {
+    outputs[i](controlState);
   }
 }
 
