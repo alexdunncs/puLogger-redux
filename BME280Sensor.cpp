@@ -12,9 +12,9 @@ BME280Sensor::BME280Sensor(uint8_t address): address(address), temperature(0), h
 }
 
 void BME280Sensor::initialise() {
-  Serial.print("Initialising sensor ");
-  Serial.print(address);
-  Serial.print("\n"); //debug
+  //Serial.print("Initialising sensor ");
+  //Serial.print(address);
+  //Serial.print("\n"); //debug
   writeReg(0xF2, ctrl_hum_reg, address);
   writeReg(0xF4, ctrl_meas_reg, address);
   writeReg(0xF5, config_reg, address);
@@ -22,9 +22,9 @@ void BME280Sensor::initialise() {
 }
 
 void BME280Sensor::pollSensor() {
-  Serial.print("Polling sensor ");
-  Serial.print(this->address);
-  Serial.print("\n"); //debug
+  //Serial.print("Polling sensor ");
+  //Serial.print(this->address);
+  //Serial.print("\n"); //debug
 	readTrim(address);
   readData(address);
   this->temperature = calibration_T(temp_raw) / 100.0;
@@ -36,9 +36,9 @@ double BME280Sensor::getTemperature() {
 	if (millis() - lastPolled > 1000) {
 		pollSensor();
 	}
-  Serial.print("Temp is ");
-  Serial.print(temperature);
-  Serial.print("\n"); //debug
+  //Serial.print("Temp is ");
+  //Serial.print(temperature);
+  //Serial.print("\n"); //debug
 	return temperature;
 }
 
@@ -46,8 +46,8 @@ double BME280Sensor::getHumidity() {
 	if (millis() - lastPolled > 1000) {
 		pollSensor();
 	}
-  Serial.print("Humidity is ");
-  Serial.print(humidity);
-  Serial.print("\n"); //debug
+  //Serial.print("Humidity is ");
+  //Serial.print(humidity);
+  //Serial.print("\n"); //debug
 	return humidity;
 }
