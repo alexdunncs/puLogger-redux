@@ -7,10 +7,10 @@
 #include "DigitalOutputDevice.h"
 
 typedef double (BME280Sensor::*sensorFunction)();
-//typedef void (DigitalOutputDevice::*output)(bool state);
 
 class FeedbackController {
-	BME280Sensor* inputSensors;
+  public://debug
+	BME280Sensor** inputSensors;
   sensorFunction getter; 
 	DigitalOutputDevice** outputDevices;
 
@@ -37,9 +37,10 @@ class FeedbackController {
 	void setSetpoint(double setpoint);
   void setHysteresis(double hysteresis);
 
+  void testInput();
   void testOutput();
 	
-	void defineInputs(BME280Sensor* inputSensors, uint8_t inputCount, sensorFunction getter);
+	void defineInputs(BME280Sensor* sensorArray, uint8_t sensorArrayCount, sensorFunction sensorRead);
 	void defineOutputs(DigitalOutputDevice** outputDevices, uint8_t outputCount);
 	void poll();
   void controlOutputs();

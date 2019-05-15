@@ -29,35 +29,47 @@ void FeedbackController::setHysteresis(double hysteresis) {
   poll();
 }
 
-void FeedbackController::testOutput() {
+void FeedbackController::testInput() {  
+  Serial.print("testing");
   while(true){
-    Serial.print("testing");
-    for (int i = 0; i < outputCount; i++) {
-    Serial.print("on");
-      outputDevices[i]->controlOutput(true);
-    }
-    delay(2000);
-    for (int i = 0; i < outputCount; i++) {
-    Serial.print("off");
-      outputDevices[i]->controlOutput(false);
+    for (int i = 0; i < inputCount; i++) {
+      latestSensorData[i] = inputSensors[i]->getHumidity();
+    Serial.println(latestSensorData[i]);
     }
     delay(2000);
   }
 }
 
-void FeedbackController::defineInputs(BME280Sensor* inputSensors, uint8_t inputCount, sensorFunction getter){
+void FeedbackController::testOutput() {
+  while(true){
+    for (int i = 0; i < outputCount; i++) {
+      outputDevices[i]->controlOutput(true);
+    }
+    for (int i = 0; i < outputCount; i++) {
+      outputDevices[i]->controlOutput(false);
+    }
+  }
+}
 
- if (this->latestSensorData) {
+void FeedbackController::defineInputs(BME280Sensor* sensorArray, uint8_t sensorArrayCount, sensorFunction sensorRead){
+
+  
+  if (this->inputSensors) {
+    delete inputSensors;
+  }
+  
+  if (this->latestSensorData) {
    delete latestSensorData;
   }
 
-  this->inputSensors = inputSensors;
-	this->inputCount = inputCount;
-  this->getter = getter;
-  this->latestSensorData = new double [inputCount];
-  
+  inputSensors = new BME280Sensor* [sensorArrayCount];
+	inputCount = sensorArrayCount;
+  getter = sensorRead;
+  latestSensorData = new double [sensorArrayCount];
+
 	for (int i = 0; i < inputCount; i++) {
-    this->latestSensorData[i] = 0.0;
+    inputSensors[i] = &sensorArray[i];
+    latestSensorData[i] = 0.0;
 	}
 }
 
@@ -76,7 +88,7 @@ void FeedbackController::defineOutputs(DigitalOutputDevice** deviceArray, uint8_
 
 void FeedbackController::poll(){
   for (int i = 0; i < inputCount; i++) {
-    this->latestSensorData[i] = (inputSensors[i].*(((FeedbackController*)this)->FeedbackController::getter))();
+    latestSensorData[i] = (inputSensors[i]->*((FeedbackController*)this)->FeedbackController::getter)();
   }
 
   controlOutputs();
