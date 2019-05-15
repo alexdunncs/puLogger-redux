@@ -2,15 +2,17 @@
 #define CONTROLLER
 
 #include <stdint.h>
-#include "BME280Sensor.h"
+#include "Sensor.h"
 #include "Heater.h"
 #include "Humidifier.h"
 #include "Buzzer.h"
 
+#include "BME280Sensor.h"
+
 
 class Controller {
 public:
-	BME280Sensor* sensors;
+	BME280Sensor** sensors;
 	uint8_t sensorsCount;
 	Heater* heater;
 	Humidifier* humidifier;

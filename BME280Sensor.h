@@ -1,9 +1,10 @@
 #ifndef BME280SENSOR
 #define BME280SENSOR
 
+#include "Sensor.h"
 #include <stdint.h>
 
-class BME280Sensor {
+class BME280Sensor: public Sensor{
 public: //debug
 	uint8_t address;
 	double temperature;
@@ -18,6 +19,7 @@ public:
 	void pollSensor();
 	double getTemperature();
 	double getHumidity();
+  double get(char parameter);
 };
 
 #endif

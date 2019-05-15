@@ -51,3 +51,15 @@ double BME280Sensor::getHumidity() {
   //Serial.print("\n"); //debug
 	return humidity;
 }
+
+
+double BME280Sensor::get(char parameter) {
+  switch(parameter) {
+  case 'T':
+    return getTemperature();
+  case 'H':
+    return getHumidity();
+  }
+  return 0.0;
+}
+

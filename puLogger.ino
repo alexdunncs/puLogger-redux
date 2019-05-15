@@ -4,6 +4,7 @@
 #include "FeedbackController.h"
 
 const uint8_t SENSORCOUNT = 2;
+//uint8_t SENSORADDRESSES[SENSORCOUNT] = {0x77};
 uint8_t SENSORADDRESSES[SENSORCOUNT] = {0x77, 0x76};
 const int BUZZERPIN = 2;
 const int FANPIN = 5;
@@ -26,20 +27,8 @@ void setup() {
   puLogger->defineHumidifier(FANPIN);
   puLogger->defineHeater(HEATPIN);
 
-  delay(1000);
-
-  Serial.println(puLogger->sensors[0].getHumidity());
-
-  delay(1000);
-
-
   humidityController = new FeedbackController(false,false,200);
-  humidityController->defineInputs(puLogger->sensors, SENSORCOUNT, &(puLogger->sensors[0].getHumidity));
-  Serial.println((int)(humidityController->inputSensors[0]));
-  Serial.println((int)(&(puLogger->sensors[0])));
-  
-  Serial.println(humidityController->inputSensors+0 == puLogger->sensors+0 ? "match" : "noMatch");
-
+  humidityController->defineInputs(puLogger->sensors, SENSORCOUNT,'H');
   humidityController->testInput();
 
 //  DigitalOutputDevice* humidifier[1] = {puLogger->humidifier};

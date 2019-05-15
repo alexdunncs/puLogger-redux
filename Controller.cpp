@@ -5,17 +5,20 @@ Controller::Controller(): sensors(nullptr), sensorsCount(0), heater(nullptr), hu
 }
 	
 void Controller::defineBME280Sensors(uint8_t* addressArray, uint8_t sensorsCount) {
-	this->sensorsCount = sensorsCount;
-	delete this->sensors;
-	this->sensors = new BME280Sensor[sensorsCount];
+	if (sensors) {
+    delete sensors;
+	}
+ 
+	sensorsCount = sensorsCount;
+	sensors = new BME280Sensor* [sensorsCount];
 	for (int i = 0; i < sensorsCount; i++) {
-		this->sensors[i] = BME280Sensor(addressArray[i]);
+		sensors[i] = new BME280Sensor(addressArray[i]);
 	}
 }
 
 void Controller::initialiseSensors() {
 	for (int i = 0; i < sensorsCount; i++) {
-    sensors[i].initialise();
+    sensors[i]->initialise();
 	}
 }
 

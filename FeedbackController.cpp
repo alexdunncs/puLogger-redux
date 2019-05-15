@@ -3,7 +3,7 @@
 #include <Arduino.h>
 
 FeedbackController::FeedbackController(bool inverselyProportional, bool pwmOutput, int controlPeriod)
-: inputSensors(nullptr), getter(nullptr), outputDevices(nullptr), latestSensorData(nullptr), inputCount(0), outputCount(0),
+: inputs(nullptr), outputDevices(nullptr), latestSensorData(nullptr), inputCount(0), outputCount(0),
 	upperBound(), lowerBound(), setpoint(0.0), hysteresis(0.0),
 	currentControlState(false), inverselyProportional(inverselyProportional), pwmOutput(pwmOutput), controlPeriod(controlPeriod) {
     
@@ -30,12 +30,14 @@ void FeedbackController::setHysteresis(double hysteresis) {
 }
 
 void FeedbackController::testInput() {  
-  Serial.print("testing");
+  Serial.println("testing");
   while(true){
     for (int i = 0; i < inputCount; i++) {
-      latestSensorData[i] = inputSensors[i]->getHumidity();
-    Serial.println(latestSensorData[i]);
+      latestSensorData[i] = inputs[i].get();
+    Serial.print(latestSensorData[i]);
+    Serial.print(" ");
     }
+    Serial.println();
     delay(2000);
   }
 }
@@ -51,24 +53,23 @@ void FeedbackController::testOutput() {
   }
 }
 
-void FeedbackController::defineInputs(BME280Sensor* sensorArray, uint8_t sensorArrayCount, sensorFunction sensorRead){
+void FeedbackController::defineInputs(Sensor** sensorArray, uint8_t sensorArrayCount, char parameterCode){
 
   
-  if (this->inputSensors) {
-    delete inputSensors;
+  if (inputs) {
+    delete inputs;
   }
   
-  if (this->latestSensorData) {
+  if (latestSensorData) {
    delete latestSensorData;
   }
 
-  inputSensors = new BME280Sensor* [sensorArrayCount];
+  inputs = new SenseInput [sensorArrayCount];
 	inputCount = sensorArrayCount;
-  getter = sensorRead;
   latestSensorData = new double [sensorArrayCount];
-
+  
 	for (int i = 0; i < inputCount; i++) {
-    inputSensors[i] = &sensorArray[i];
+	  inputs[i] = SenseInput(sensorArray[i], parameterCode);
     latestSensorData[i] = 0.0;
 	}
 }
@@ -88,7 +89,7 @@ void FeedbackController::defineOutputs(DigitalOutputDevice** deviceArray, uint8_
 
 void FeedbackController::poll(){
   for (int i = 0; i < inputCount; i++) {
-    latestSensorData[i] = (inputSensors[i]->*((FeedbackController*)this)->FeedbackController::getter)();
+    latestSensorData[i] = inputs[i].get();
   }
 
   controlOutputs();

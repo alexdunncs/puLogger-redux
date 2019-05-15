@@ -3,15 +3,13 @@
 
 #include <stdint.h>
 #include "Bound.h"
-#include "BME280Sensor.h"
+#include "Sensor.h"
+#include "SenseInput.h"
 #include "DigitalOutputDevice.h"
-
-typedef double (BME280Sensor::*sensorFunction)();
 
 class FeedbackController {
   public://debug
-	BME280Sensor** inputSensors;
-  sensorFunction getter; 
+	SenseInput* inputs;
 	DigitalOutputDevice** outputDevices;
 
   double* latestSensorData;
@@ -40,7 +38,7 @@ class FeedbackController {
   void testInput();
   void testOutput();
 	
-	void defineInputs(BME280Sensor* sensorArray, uint8_t sensorArrayCount, sensorFunction sensorRead);
+	void defineInputs(Sensor** sensorArray, uint8_t sensorArrayCount, char parameterCode);
 	void defineOutputs(DigitalOutputDevice** outputDevices, uint8_t outputCount);
 	void poll();
   void controlOutputs();
