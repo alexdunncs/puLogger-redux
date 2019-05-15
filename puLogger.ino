@@ -26,17 +26,13 @@ void setup() {
   puLogger->defineHumidifier(FANPIN);
   puLogger->defineHeater(HEATPIN);
 
-  BME280Sensor* humiditySensors = puLogger->sensors;
-  humidityController->defineInputs(humiditySensors, 1, &BME280Sensor::getHumidity);
-  
-  DigitalOutputDevice humidifier[1] = {puLogger->humidifier};
+//  BME280Sensor* humiditySensors = puLogger->sensors;
+//  humidityController->defineInputs(humiditySensors, 1, &BME280Sensor::getHumidity);
+
+  DigitalOutputDevice* humidifier[1] = {puLogger->humidifier};
   humidityController = new FeedbackController(false,false,200);
   humidityController->setSetpoint(70.0);
-  humidityController->setHysteresis(0.0);
   humidityController->defineOutputs(humidifier, 1);
-  
-
-  Serial.println("ready to go");
   humidityController->poll();
 }
 

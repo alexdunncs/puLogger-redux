@@ -6,7 +6,7 @@ FeedbackController::FeedbackController(bool inverselyProportional, bool pwmOutpu
 : inputSensors(nullptr), getter(nullptr), outputDevices(nullptr), latestSensorData(nullptr), inputCount(0), outputCount(0),
 	upperBound(), lowerBound(), setpoint(0.0), hysteresis(0.0),
 	currentControlState(false), inverselyProportional(inverselyProportional), pwmOutput(pwmOutput), controlPeriod(controlPeriod) {
-	
+    
 }
 
 void FeedbackController::setUpperBound(double value){
@@ -29,6 +29,22 @@ void FeedbackController::setHysteresis(double hysteresis) {
   poll();
 }
 
+void FeedbackController::testOutput() {
+  while(true){
+    Serial.print("testing");
+    for (int i = 0; i < outputCount; i++) {
+    Serial.print("on");
+      outputDevices[i]->controlOutput(true);
+    }
+    delay(2000);
+    for (int i = 0; i < outputCount; i++) {
+    Serial.print("off");
+      outputDevices[i]->controlOutput(false);
+    }
+    delay(2000);
+  }
+}
+
 void FeedbackController::defineInputs(BME280Sensor* inputSensors, uint8_t inputCount, sensorFunction getter){
 
  if (this->latestSensorData) {
@@ -45,12 +61,16 @@ void FeedbackController::defineInputs(BME280Sensor* inputSensors, uint8_t inputC
 	}
 }
 
-void FeedbackController::defineOutputs(DigitalOutputDevice* outputDevices, uint8_t outputCount){
-	this->outputDevices = outputDevices;
-  this->outputCount = outputCount;
+void FeedbackController::defineOutputs(DigitalOutputDevice** deviceArray, uint8_t deviceArrayCount){
+  if (outputDevices) {
+    delete outputDevices; 
+  }
+  outputDevices = new DigitalOutputDevice* [deviceArrayCount];
+  outputCount = deviceArrayCount;
   
   for (int i = 0; i < outputCount; i++) {
-    outputDevices[i].controlOutput(this->currentControlState);
+    outputDevices[i] = deviceArray[i];
+    outputDevices[i]->controlOutput(currentControlState);
   }
 }
 
@@ -83,7 +103,7 @@ void FeedbackController::controlOutputs() {
 
   this->currentControlState = controlState;
   for (int i = 0; i < this->outputCount; i++) {
-    outputDevices[i].controlOutput(controlState);
+    outputDevices[i]->controlOutput(controlState);
   }
 }
 

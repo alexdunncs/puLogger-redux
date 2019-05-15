@@ -12,7 +12,7 @@ typedef double (BME280Sensor::*sensorFunction)();
 class FeedbackController {
 	BME280Sensor* inputSensors;
   sensorFunction getter; 
-	DigitalOutputDevice* outputDevices;
+	DigitalOutputDevice** outputDevices;
 
   double* latestSensorData;
 	
@@ -36,10 +36,11 @@ class FeedbackController {
 	void setLowerBound(double value);
 	void setSetpoint(double setpoint);
   void setHysteresis(double hysteresis);
-  
+
+  void testOutput();
 	
 	void defineInputs(BME280Sensor* inputSensors, uint8_t inputCount, sensorFunction getter);
-	void defineOutputs(DigitalOutputDevice* outputDevices, uint8_t outputCount);
+	void defineOutputs(DigitalOutputDevice** outputDevices, uint8_t outputCount);
 	void poll();
   void controlOutputs();
 	
