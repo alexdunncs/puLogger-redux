@@ -11,3 +11,7 @@ SenseInput::SenseInput(Sensor* _sensor, char _parameterCode): sensor(_sensor), p
 double SenseInput::get() {
 	return sensor->get(parameterCode);
 }
+
+char SenseInput::getParameterCode() {
+  return parameterCode;
+}

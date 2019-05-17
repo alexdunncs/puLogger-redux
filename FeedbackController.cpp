@@ -90,8 +90,13 @@ void FeedbackController::defineOutputs(DigitalOutputDevice** deviceArray, uint8_
 void FeedbackController::poll(){
   for (int i = 0; i < inputCount; i++) {
     latestSensorData[i] = inputs[i].get();
+    Serial.print(inputs[i].getParameterCode());
+    Serial.print(": ");
+    Serial.print(latestSensorData[i]);
+    Serial.print("   ");
   }
 
+  Serial.println("");
   controlOutputs();
 }
 
@@ -113,7 +118,12 @@ void FeedbackController::controlOutputs() {
   else if (this->upperBound.isSet && getMaxValue() > this->upperBound.value) {
     controlState = this->inverselyProportional ? true : false;
   }
-
+  
+  if (controlState != currentControlState) {
+    Serial.print("<unnamed output>");
+    Serial.println(controlState ? ": ON" : ": OFF");   
+  }
+  
   this->currentControlState = controlState;
   for (int i = 0; i < this->outputCount; i++) {
     outputDevices[i]->controlOutput(controlState);

@@ -11,6 +11,7 @@ public:
 		SenseInput();
     SenseInput(Sensor* _sensor, char _parameterCode);
     double get();
+    char getParameterCode();
 };
 
 #endif
