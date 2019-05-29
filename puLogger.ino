@@ -3,9 +3,9 @@
 #include "printf.h"
 #include "FeedbackController.h"
 
-const uint8_t SENSORCOUNT = 1;
-uint8_t SENSORADDRESSES[SENSORCOUNT] = {0x76};
-//uint8_t SENSORADDRESSES[SENSORCOUNT] = {0x77, 0x76};
+const uint8_t SENSORCOUNT = 2;
+//uint8_t SENSORADDRESSES[SENSORCOUNT] = {0x76};
+uint8_t SENSORADDRESSES[SENSORCOUNT] = {0x77, 0x76};
 const int BUZZERPIN = 2;
 const int FANPIN = 5;
 const int HEATPIN = 4;
@@ -22,7 +22,6 @@ void setup() {
 	puLogger = new Controller();
 	
 	puLogger->defineBME280Sensors(SENSORADDRESSES, SENSORCOUNT);
-	puLogger->initialiseSensors();
   puLogger->defineBuzzer(BUZZERPIN);
   puLogger->defineHumidifier(FANPIN);
   puLogger->defineHeater(HEATPIN);
@@ -40,12 +39,11 @@ void setup() {
   DigitalOutputDevice* heater[1] = {puLogger->heater};
   temperatureController->setSetpoint(25.0);
   temperatureController->defineOutputs(heater, 1);
-
-  
 }
 
 void loop() { 
   humidityController->poll();
+  delay(1000);
   temperatureController->poll();
   delay(1000);
 }
