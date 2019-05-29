@@ -5,7 +5,7 @@
 
 const uint8_t SENSORCOUNT = 2;
 //uint8_t SENSORADDRESSES[SENSORCOUNT] = {0x76};
-uint8_t SENSORADDRESSES[SENSORCOUNT] = {0x77, 0x76};
+uint8_t SENSORADDRESSES[SENSORCOUNT] = {0x76, 0x77};
 const int BUZZERPIN = 2;
 const int FANPIN = 5;
 const int HEATPIN = 4;
