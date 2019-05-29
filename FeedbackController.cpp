@@ -1,6 +1,6 @@
 #include "FeedbackController.h"
 #include <stdint.h>
-#include <Arduino.h>
+//#include <Arduino.h>
 
 FeedbackController::FeedbackController(bool inverselyProportional, bool pwmOutput, int controlPeriod)
 : inputs(nullptr), outputDevices(nullptr), latestSensorData(nullptr), inputCount(0), outputCount(0),
