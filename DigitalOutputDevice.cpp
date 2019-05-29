@@ -1,7 +1,7 @@
 #include "DigitalOutputDevice.h"
 
 
-DigitalOutputDevice::DigitalOutputDevice(uint8_t pin) : pin(pin) {
+DigitalOutputDevice::DigitalOutputDevice(uint8_t pin, String name) : pin(pin), name(name) {
 	pinMode(pin, OUTPUT);
 }
 
@@ -17,3 +17,6 @@ void DigitalOutputDevice::deactivate() {
 	controlOutput(false);
 }
 
+String DigitalOutputDevice::getName() {
+  return name;
+}

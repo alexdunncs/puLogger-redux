@@ -6,6 +6,8 @@
 class Buzzer: public DigitalOutputDevice {
 public:
 	Buzzer(uint8_t pin);
+  Buzzer(uint8_t pin, String name);
+
 	void beep();
 };
 

@@ -43,7 +43,7 @@ void setup() {
 
 void loop() { 
   humidityController->poll();
-  delay(1000);
   temperatureController->poll();
   delay(1000);
+  Serial.println("");
 }

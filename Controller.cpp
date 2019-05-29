@@ -48,4 +48,3 @@ void Controller::beep() {
     buzzer->beep();
   }
 }
-

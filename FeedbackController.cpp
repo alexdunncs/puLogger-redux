@@ -95,8 +95,6 @@ void FeedbackController::poll(){
     Serial.print(latestSensorData[i]);
     Serial.print("   ");
   }
-
-  Serial.println("");
   controlOutputs();
 }
 
@@ -120,8 +118,10 @@ void FeedbackController::controlOutputs() {
   }
   
   if (controlState != currentControlState) {
-    Serial.print("<unnamed output>");
-    Serial.println(controlState ? ": ON" : ": OFF");   
+    for (int i = 0; i < outputCount; i++) {
+      Serial.print(outputDevices[i]->getName());
+      Serial.print(controlState ? ": ON " : ": OFF ");   
+    }
   }
   
   this->currentControlState = controlState;
