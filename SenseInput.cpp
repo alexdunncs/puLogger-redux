@@ -15,3 +15,7 @@ double SenseInput::get() {
 char SenseInput::getParameterCode() {
   return parameterCode;
 }
+
+String SenseInput::getName() {
+  return sensor->getName();
+}

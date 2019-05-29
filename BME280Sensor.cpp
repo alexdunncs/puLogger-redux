@@ -4,12 +4,12 @@
 #include "Wire.h"
 
 
-BME280Sensor::BME280Sensor(): address(0), temperature(0), humidity(0), lastPolled(0){
+BME280Sensor::BME280Sensor(): address(0), name("uninitialised"), temperature(0), humidity(0), lastPolled(0){
   
 }
 
 
-BME280Sensor::BME280Sensor(uint8_t address): address(address), temperature(0), humidity(0), lastPolled(0){
+BME280Sensor::BME280Sensor(uint8_t address, String name): address(address), name(name), temperature(0), humidity(0), lastPolled(0){
     delay(500);
     uint8_t osrs_t = 1;             //Temperature oversampling x 1
     uint8_t osrs_p = 1;             //Pressure oversampling x 1
@@ -38,6 +38,10 @@ void BME280Sensor::pollSensor() {
   this->temperature = calibration_T(temp_raw) / 100.0;
   this->humidity = calibration_H(hum_raw) / 1024.0;
 	lastPolled = millis();
+}
+
+String BME280Sensor::getName() {
+  return name;
 }
 
 

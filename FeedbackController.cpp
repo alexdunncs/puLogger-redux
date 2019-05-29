@@ -90,10 +90,12 @@ void FeedbackController::defineOutputs(DigitalOutputDevice** deviceArray, uint8_
 void FeedbackController::poll(){
   for (int i = 0; i < inputCount; i++) {
     latestSensorData[i] = inputs[i].get();
+    Serial.print(inputs[i].getName());
+    Serial.print(": ");
     Serial.print(inputs[i].getParameterCode());
     Serial.print(": ");
     Serial.print(latestSensorData[i]);
-    Serial.print("   ");
+    Serial.print("    ");
   }
   controlOutputs();
 }

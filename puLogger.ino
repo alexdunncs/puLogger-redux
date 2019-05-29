@@ -4,9 +4,11 @@
 
 #include "config_nano.h"
 
-const uint8_t SENSORCOUNT = 2;
-//uint8_t SENSORADDRESSES[SENSORCOUNT] = {0x76};
-uint8_t SENSORADDRESSES[SENSORCOUNT] = {0x76, 0x77};
+const uint8_t SENSORCOUNT = 1;
+uint8_t SENSORADDRESSES[SENSORCOUNT] = {0x77};
+String SENSORNAMES[SENSORCOUNT] = {"sensor1"};
+//uint8_t SENSORADDRESSES[SENSORCOUNT] = {0x76, 0x77};
+//String SENSORNAMES[SENSORCOUNT] = {"sensor1", "sensor2"};
 
 Controller* puLogger = nullptr;
 FeedbackController* temperatureController = nullptr;
@@ -18,7 +20,7 @@ void setup() {
 	
 	puLogger = new Controller();
 	
-	puLogger->defineBME280Sensors(SENSORADDRESSES, SENSORCOUNT);
+	puLogger->defineBME280Sensors(SENSORADDRESSES, SENSORNAMES, SENSORCOUNT);
   puLogger->defineBuzzer(BUZZERPIN);
   puLogger->defineHumidifier(FANPIN);
   puLogger->defineHeater(HEATPIN);

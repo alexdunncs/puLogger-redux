@@ -20,7 +20,7 @@ public:
 	
 public:
   Controller();
-	void defineBME280Sensors(uint8_t* addressArray, uint8_t sensorsCount);
+	void defineBME280Sensors(uint8_t* addressArray, String* nameArray, uint8_t sensorsCount);
 	void initialiseSensors();
 	void defineHeater(uint8_t pin);
 	void defineHumidifier(uint8_t pin);
