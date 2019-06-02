@@ -17,12 +17,15 @@
 #include "Controller.h"
 #include "FeedbackController.h"
 
-#include "config_nano.h"
+//#include "config_nano.h"
+#include "config_D1_pro_mini.h"
 
 //Wifi credentials
 const char* ssid = "Nacho2G";
 const char* password = "yaNgchInghaOpu'ErchA@$350reMinbi";
 const char* submissionUrl = "http://54.162.202.222/pulogger/submitdatum/";
+//const char* submissionUrl = "http://192.168.1.11:8000/pulogger/submitdatum/";
+
 
 String CONTROLLERNAME = "test";
 //const uint8_t SENSORCOUNT = 1;
@@ -39,7 +42,6 @@ FeedbackController* humidityController = nullptr;
 
 
 String addParameter(String url, String paramName, String paramValue) {
-  Serial.println(url.indexOf('?'));
   url += (url.indexOf('?') != -1 ? "&" : "?");
   url += (paramName + "=" + paramValue);
   return url;
@@ -68,8 +70,6 @@ void submitData(FeedbackController* fController, String submissionUrl) {
     url = addParameter(url, "sensor", sensorName);
     url = addParameter(url, "type", sensorParameter);
     url = addParameter(url, "value", String(sensorValue));
-
-    Serial.println(url);
     
     http.begin(url);      //Specify request destination
     http.addHeader("Content-Type", "text/plain");  //Specify content-type header
@@ -77,8 +77,8 @@ void submitData(FeedbackController* fController, String submissionUrl) {
     int httpCode = http.GET();   //Send the request
     String payload = http.getString();                  //Get the response payload
     
-    Serial.println(httpCode);   //Print HTTP return code
-    Serial.println(payload);    //Print request response payload
+//    Serial.println(httpCode);   //Print HTTP return code
+//    Serial.println(payload);    //Print request response payload
     
     http.end();  //Close connection
   }
@@ -99,17 +99,17 @@ void setup() {
 
   humidityController = new FeedbackController(false,false,200);
   humidityController->defineInputs(reinterpret_cast<Sensor**>(puLogger->sensors), SENSORCOUNT,'H');
-//  DigitalOutputDevice* humidifier[1] = {puLogger->humidifier};
-//  humidityController->setSetpoint(65.0);
-//  humidityController->setHysteresis(2.5);
-//  humidityController->setUpperBound(70.0);
-//  humidityController->defineOutputs(humidifier, 1);
+  DigitalOutputDevice* humidifier[1] = {puLogger->humidifier};
+  humidityController->setSetpoint(65.0);
+  humidityController->setHysteresis(2.5);
+  humidityController->setUpperBound(70.0);
+  humidityController->defineOutputs(humidifier, 1);
   
   temperatureController = new FeedbackController(false,false,200);
   temperatureController->defineInputs(reinterpret_cast<Sensor**>(puLogger->sensors), SENSORCOUNT,'T');
-//  DigitalOutputDevice* heater[1] = {puLogger->heater};
-//  temperatureController->setSetpoint(25.0);
-//  temperatureController->defineOutputs(heater, 1);
+  DigitalOutputDevice* heater[1] = {puLogger->heater};
+  temperatureController->setSetpoint(25.0);
+  temperatureController->defineOutputs(heater, 1);
 
   while (WiFi.status() != WL_CONNECTED) {  //Wait for the WiFI connection completion
     delay(500);
@@ -122,15 +122,15 @@ void setup() {
 void loop() { 
   humidityController->poll();
   temperatureController->poll();
+  delay(1000*10);
 
   if(WiFi.status()== WL_CONNECTED){   //Check WiFi connection status
-//    submitData(humidityController, submissionUrl);
+    submitData(humidityController, submissionUrl);
     submitData(temperatureController, submissionUrl);
   }
   else {
     Serial.println("Error in WiFi connection");   
   }
   
-  delay(10000);
   Serial.println("");
 }

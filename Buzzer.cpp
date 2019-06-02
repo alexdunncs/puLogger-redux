@@ -12,4 +12,12 @@ void Buzzer::beep() {
   activate();
   delay(40);
   deactivate();
+  delay(20);
+}
+
+void Buzzer::longBeep() {
+  activate();
+  delay(1000);
+  deactivate();
+  delay(20);
 }

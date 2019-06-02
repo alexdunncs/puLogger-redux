@@ -47,9 +47,11 @@ void FeedbackController::testOutput() {
     for (int i = 0; i < outputCount; i++) {
       outputDevices[i]->controlOutput(true);
     }
+    delay(2000);
     for (int i = 0; i < outputCount; i++) {
       outputDevices[i]->controlOutput(false);
     }
+    delay(2000);
   }
 }
 
