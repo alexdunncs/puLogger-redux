@@ -33,7 +33,7 @@ uint8_t SENSORADDRESSES[SENSORCOUNT] = {0x76, 0x77};
 String SENSORNAMES[SENSORCOUNT] = {"sensor1", "sensor2"};
 
 //Sensor calibration offsets (value = measurement + offset)
-double HUMIDITYCALIBRATIONOFFSETS[SENSORCOUNT] = {0.0, 0.0};
+double HUMIDITYCALIBRATIONOFFSETS[SENSORCOUNT] = {5.0, 4.5};
 //const double TEMPERATURECALIBRATIONOFFSETS = [0.0, 0.0]
 
 HTTPClient http;
@@ -101,9 +101,9 @@ void setup() {
   humidityController = new FeedbackController(false,false,200);
   humidityController->defineInputs(reinterpret_cast<Sensor**>(puLogger->sensors), HUMIDITYCALIBRATIONOFFSETS, SENSORCOUNT,'H');
   DigitalOutputDevice* humidifier[1] = {puLogger->humidifier};
-  humidityController->setSetpoint(65.0);
+  humidityController->setSetpoint(68.0);
   humidityController->setHysteresis(0.5);
-  humidityController->setUpperBound(68.0);
+  humidityController->setUpperBound(70.0);
   humidityController->defineOutputs(humidifier, 1);
   
   temperatureController = new FeedbackController(false,false,200);
