@@ -26,14 +26,15 @@ const char* password = "yaNgchInghaOpu'ErchA@$350reMinbi";
 const char* submissionUrl = "http://54.162.202.222/pulogger/submitdatum/";
 //const char* submissionUrl = "http://192.168.1.11:8000/pulogger/submitdatum/";
 
-
+//Device/sensor config
 String CONTROLLERNAME = "test";
-//const uint8_t SENSORCOUNT = 1;
-//uint8_t SENSORADDRESSES[SENSORCOUNT] = {0x77};
-//String SENSORNAMES[SENSORCOUNT] = {"sensor1"};
 const uint8_t SENSORCOUNT = 2;
 uint8_t SENSORADDRESSES[SENSORCOUNT] = {0x76, 0x77};
 String SENSORNAMES[SENSORCOUNT] = {"sensor1", "sensor2"};
+
+//Sensor calibration offsets (value = measurement + offset)
+double HUMIDITYCALIBRATIONOFFSETS[SENSORCOUNT] = {0.0, 0.0};
+//const double TEMPERATURECALIBRATIONOFFSETS = [0.0, 0.0]
 
 HTTPClient http;
 Controller* puLogger = nullptr;
@@ -98,7 +99,7 @@ void setup() {
   puLogger->defineHeater(HEATPIN);
 
   humidityController = new FeedbackController(false,false,200);
-  humidityController->defineInputs(reinterpret_cast<Sensor**>(puLogger->sensors), SENSORCOUNT,'H');
+  humidityController->defineInputs(reinterpret_cast<Sensor**>(puLogger->sensors), HUMIDITYCALIBRATIONOFFSETS, SENSORCOUNT,'H');
   DigitalOutputDevice* humidifier[1] = {puLogger->humidifier};
   humidityController->setSetpoint(65.0);
   humidityController->setHysteresis(0.5);

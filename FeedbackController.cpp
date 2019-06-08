@@ -56,8 +56,10 @@ void FeedbackController::testOutput() {
 }
 
 void FeedbackController::defineInputs(Sensor** sensorArray, uint8_t sensorArrayCount, char parameterCode){
+  defineInputs(sensorArray, nullptr, sensorArrayCount, parameterCode);
+}
 
-  
+void FeedbackController::defineInputs(Sensor** sensorArray, double* calibrationOffsetArray, uint8_t sensorArrayCount, char parameterCode){
   if (inputs) {
     delete inputs;
   }
@@ -71,7 +73,12 @@ void FeedbackController::defineInputs(Sensor** sensorArray, uint8_t sensorArrayC
   latestSensorData = new double [sensorArrayCount];
   
 	for (int i = 0; i < inputCount; i++) {
-	  inputs[i] = SenseInput(sensorArray[i], parameterCode);
+    if (calibrationOffsetArray != nullptr) {
+      inputs[i] = SenseInput(sensorArray[i], calibrationOffsetArray[i], parameterCode);
+    }
+    else {
+      inputs[i] = SenseInput(sensorArray[i], parameterCode);
+    }
     latestSensorData[i] = 0.0;
 	}
 }
