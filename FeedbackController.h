@@ -38,7 +38,8 @@ class FeedbackController {
   void testInput();
   void testOutput();
 	
-	void defineInputs(Sensor** sensorArray, uint8_t sensorArrayCount, char parameterCode);
+  void defineInputs(Sensor** sensorArray, uint8_t sensorArrayCount, char parameterCode);
+  void defineInputs(Sensor** sensorArray, double* calibrationOffsetArray, uint8_t sensorArrayCount, char parameterCode);
 	void defineOutputs(DigitalOutputDevice** outputDevices, uint8_t outputCount);
 	void poll();
   void controlOutputs();
