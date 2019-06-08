@@ -3,9 +3,11 @@
 
 #include "Sensor.h"
 #include <stdint.h>
+#include <Arduino.h>
 
 class BME280Sensor: public Sensor{
 public: //debug
+  String name;
 	uint8_t address;
 	double temperature;
 	double humidity;
@@ -13,10 +15,11 @@ public: //debug
 	
 public:
   BME280Sensor();
-  BME280Sensor(uint8_t address);
+  BME280Sensor(uint8_t address, String name);
 
   void initialise();
 	void pollSensor();
+  String getName();
 	double getTemperature();
 	double getHumidity();
   double get(char parameter);

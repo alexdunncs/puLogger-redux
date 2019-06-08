@@ -9,6 +9,8 @@ public:
   Buzzer(uint8_t pin, String name);
 
 	void beep();
+  void longBeep();
+  
 };
 
 #endif

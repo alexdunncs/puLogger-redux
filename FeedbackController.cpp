@@ -1,6 +1,6 @@
 #include "FeedbackController.h"
 #include <stdint.h>
-#include <Arduino.h>
+//#include <Arduino.h>
 
 FeedbackController::FeedbackController(bool inverselyProportional, bool pwmOutput, int controlPeriod)
 : inputs(nullptr), outputDevices(nullptr), latestSensorData(nullptr), inputCount(0), outputCount(0),
@@ -47,9 +47,11 @@ void FeedbackController::testOutput() {
     for (int i = 0; i < outputCount; i++) {
       outputDevices[i]->controlOutput(true);
     }
+    delay(2000);
     for (int i = 0; i < outputCount; i++) {
       outputDevices[i]->controlOutput(false);
     }
+    delay(2000);
   }
 }
 
@@ -90,10 +92,12 @@ void FeedbackController::defineOutputs(DigitalOutputDevice** deviceArray, uint8_
 void FeedbackController::poll(){
   for (int i = 0; i < inputCount; i++) {
     latestSensorData[i] = inputs[i].get();
+    Serial.print(inputs[i].getName());
+    Serial.print(": ");
     Serial.print(inputs[i].getParameterCode());
     Serial.print(": ");
     Serial.print(latestSensorData[i]);
-    Serial.print("   ");
+    Serial.print("    ");
   }
   controlOutputs();
 }
