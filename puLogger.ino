@@ -101,8 +101,8 @@ void setup() {
   humidityController->defineInputs(reinterpret_cast<Sensor**>(puLogger->sensors), SENSORCOUNT,'H');
   DigitalOutputDevice* humidifier[1] = {puLogger->humidifier};
   humidityController->setSetpoint(65.0);
-  humidityController->setHysteresis(2.5);
-  humidityController->setUpperBound(70.0);
+  humidityController->setHysteresis(0.5);
+  humidityController->setUpperBound(68.0);
   humidityController->defineOutputs(humidifier, 1);
   
   temperatureController = new FeedbackController(false,false,200);
@@ -122,8 +122,12 @@ void setup() {
 void loop() { 
   humidityController->poll();
   temperatureController->poll();
-  delay(1000*10);
-
+  Serial.print("AVG: (");
+  Serial.print(humidityController->getAvgValue());
+  Serial.print("|");
+  Serial.print(temperatureController->getAvgValue());
+  Serial.print(")");
+  
   if(WiFi.status()== WL_CONNECTED){   //Check WiFi connection status
     submitData(humidityController, submissionUrl);
     submitData(temperatureController, submissionUrl);
@@ -133,4 +137,5 @@ void loop() {
   }
   
   Serial.println("");
+  delay(1000*10);
 }
