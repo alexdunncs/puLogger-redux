@@ -6,11 +6,14 @@
 #include "Sensor.h"
 #include "SenseInput.h"
 #include "DigitalOutputDevice.h"
+#include "Buzzer.h"
 
 class FeedbackController {
   public://debug
 	SenseInput* inputs;
 	DigitalOutputDevice** outputDevices;
+  Buzzer* alarmOutputDevice;
+  
 
   double* latestSensorData;
 	
@@ -21,6 +24,11 @@ class FeedbackController {
 	Bound lowerBound;
 	double setpoint;
   double hysteresis;
+  Bound alarmUpperThreshold;
+  Bound alarmLowerThreshold;
+  unsigned long gracePeriodMillis;
+  bool activeAlarm;
+  unsigned long inAlarmStateSince;
 
   bool currentControlState;
 	bool inverselyProportional;
@@ -34,6 +42,8 @@ class FeedbackController {
 	void setLowerBound(double value);
 	void setSetpoint(double setpoint);
   void setHysteresis(double hysteresis);
+  void setAlarm(double lowLimit, double highLimit, unsigned long gracePeriodMillis);
+  void removeAlarm();
 
   void testInput();
   void testOutput();
@@ -41,6 +51,10 @@ class FeedbackController {
   void defineInputs(Sensor** sensorArray, uint8_t sensorArrayCount, char parameterCode);
   void defineInputs(Sensor** sensorArray, double* calibrationOffsetArray, uint8_t sensorArrayCount, char parameterCode);
 	void defineOutputs(DigitalOutputDevice** outputDevices, uint8_t outputCount);
+  void defineAlarm(Buzzer* buzzer);
+
+  bool existingAlarmState();
+  void soundAlarm();
 	void poll();
   void controlOutputs();
 	

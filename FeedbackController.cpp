@@ -3,8 +3,9 @@
 //#include <Arduino.h>
 
 FeedbackController::FeedbackController(bool inverselyProportional, bool pwmOutput, int controlPeriod)
-: inputs(nullptr), outputDevices(nullptr), latestSensorData(nullptr), inputCount(0), outputCount(0),
+: inputs(nullptr), outputDevices(nullptr), alarmOutputDevice(nullptr), latestSensorData(nullptr), inputCount(0), outputCount(0),
 	upperBound(), lowerBound(), setpoint(0.0), hysteresis(0.0),
+  alarmUpperThreshold(), alarmLowerThreshold(), gracePeriodMillis(0), activeAlarm(false), inAlarmStateSince(0),
 	currentControlState(false), inverselyProportional(inverselyProportional), pwmOutput(pwmOutput), controlPeriod(controlPeriod) {
     
 }
@@ -27,6 +28,18 @@ void FeedbackController::setSetpoint(double setpoint){
 void FeedbackController::setHysteresis(double hysteresis) {
   this->hysteresis = hysteresis;
   poll();
+}
+
+void FeedbackController::setAlarm(double lowLimit, double highLimit, unsigned long gracePeriodMillis) {
+  alarmUpperThreshold = Bound(highLimit);
+  alarmLowerThreshold = Bound(lowLimit);
+  this->gracePeriodMillis = gracePeriodMillis;
+}
+
+void FeedbackController::removeAlarm() {
+  alarmUpperThreshold = Bound();
+  alarmLowerThreshold = Bound();
+  this->gracePeriodMillis = 0;
 }
 
 void FeedbackController::testInput() {  
@@ -96,17 +109,58 @@ void FeedbackController::defineOutputs(DigitalOutputDevice** deviceArray, uint8_
   }
 }
 
+void FeedbackController::defineAlarm(Buzzer* buzzer) {
+  alarmOutputDevice = buzzer;
+}
+
+bool FeedbackController::existingAlarmState() {
+  return activeAlarm;
+}
+
+void FeedbackController::soundAlarm() {
+  alarmOutputDevice->longBeep();
+}
+
 void FeedbackController::poll(){
+  bool inAlarm = false;
   for (int i = 0; i < inputCount; i++) {
     latestSensorData[i] = inputs[i].get();
+    inAlarm = ((alarmLowerThreshold.isSet && alarmLowerThreshold > latestSensorData[i])  || 
+               (alarmUpperThreshold.isSet && alarmUpperThreshold < latestSensorData[i]));
     Serial.print(inputs[i].getName());
     Serial.print(": ");
     Serial.print(inputs[i].getParameterCode());
     Serial.print(": ");
     Serial.print(latestSensorData[i]);
     Serial.print("    ");
+    Serial.print(inAlarm ? "Tentative alarm state\n" : "No alarm\n");
   }
   controlOutputs();
+
+  //alarm processing
+  if (inAlarm) {
+    bool inRollover = (millis() < inAlarmStateSince);
+    if (inRollover) {
+      inAlarmStateSince = millis();
+    }
+    
+    if (existingAlarmState()) {
+      if ((millis() - inAlarmStateSince) > gracePeriodMillis ||
+          inRollover) {
+            Serial.print("Sounding Alarm\n");
+            soundAlarm();
+          }
+    }
+    else {
+      Serial.print("Registering Alarm\n");
+      activeAlarm = true;
+      inAlarmStateSince = millis();
+    }
+  }
+  else {
+    activeAlarm = false;
+    inAlarmStateSince = 0;
+  }
 }
 
 void FeedbackController::controlOutputs() {

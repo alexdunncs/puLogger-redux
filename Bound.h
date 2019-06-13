@@ -7,6 +7,10 @@ struct Bound {
 
 	Bound();
   Bound(double value);
+
+  bool operator < (double other);
+  bool operator > (double other);
+  
 };
 
 #endif
