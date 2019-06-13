@@ -125,8 +125,11 @@ void FeedbackController::poll(){
   bool inAlarm = false;
   for (int i = 0; i < inputCount; i++) {
     latestSensorData[i] = inputs[i].get();
-    inAlarm = ((alarmLowerThreshold.isSet && alarmLowerThreshold > latestSensorData[i])  || 
-               (alarmUpperThreshold.isSet && alarmUpperThreshold < latestSensorData[i]));
+    if ((alarmLowerThreshold.isSet && alarmLowerThreshold > latestSensorData[i])  || 
+        (alarmUpperThreshold.isSet && alarmUpperThreshold < latestSensorData[i])) {
+      inAlarm = true;                
+    }
+    
     Serial.print(inputs[i].getName());
     Serial.print(": ");
     Serial.print(inputs[i].getParameterCode());

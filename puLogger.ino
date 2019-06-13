@@ -103,10 +103,10 @@ void setup() {
   DigitalOutputDevice* humidifier[1] = {puLogger->humidifier};
   humidityController->setSetpoint(68.0);
   humidityController->setHysteresis(0.5);
-  humidityController->setUpperBound(70.0);
+  humidityController->setUpperBound(73.0);
   humidityController->defineOutputs(humidifier, 1);
   humidityController->defineAlarm(puLogger->buzzer);
-  humidityController->setAlarm(62.0, 73.5, 5000);
+  humidityController->setAlarm(62.0, 73.5, 1000*60*10);
   
   temperatureController = new FeedbackController(false,false,200);
   temperatureController->defineInputs(reinterpret_cast<Sensor**>(puLogger->sensors), SENSORCOUNT,'T');
@@ -140,5 +140,5 @@ void loop() {
   }
   
   Serial.println("");
-  delay(1000*2);//10);
+  delay(1000*10);
 }
