@@ -12,7 +12,7 @@ class FeedbackController {
   public://debug
 	SenseInput* inputs;
 	DigitalOutputDevice** outputDevices;
-  Buzzer* alarmOutputDevice;
+  Buzzer* buzzer;
   
 
   double* latestSensorData;
@@ -51,10 +51,11 @@ class FeedbackController {
   void defineInputs(Sensor** sensorArray, uint8_t sensorArrayCount, char parameterCode);
   void defineInputs(Sensor** sensorArray, double* calibrationOffsetArray, uint8_t sensorArrayCount, char parameterCode);
 	void defineOutputs(DigitalOutputDevice** outputDevices, uint8_t outputCount);
-  void defineAlarm(Buzzer* buzzer);
+  void defineBuzzer(Buzzer* buzzer);
 
   bool existingAlarmState();
   void soundAlarm();
+	void updateAlarmState(bool valueOutOfBounds);
 	void poll();
   void controlOutputs();
 	

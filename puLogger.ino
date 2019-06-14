@@ -105,8 +105,9 @@ void setup() {
   humidityController->setHysteresis(0.5);
   humidityController->setUpperBound(73.0);
   humidityController->defineOutputs(humidifier, 1);
-  humidityController->defineAlarm(puLogger->buzzer);
-  humidityController->setAlarm(62.0, 73.5, 1000*60*10);
+  humidityController->defineBuzzer(puLogger->buzzer);
+//  humidityController->setAlarm(62.0, 73.5, 1000*60*10);
+  humidityController->setAlarm(60.0, 73.5, 1000*10);
   
   temperatureController = new FeedbackController(false,false,200);
   temperatureController->defineInputs(reinterpret_cast<Sensor**>(puLogger->sensors), SENSORCOUNT,'T');
