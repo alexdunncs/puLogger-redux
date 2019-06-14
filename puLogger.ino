@@ -40,6 +40,8 @@ HTTPClient http;
 Controller* puLogger = nullptr;
 FeedbackController* temperatureController = nullptr;
 FeedbackController* humidityController = nullptr;
+unsigned long lastTransmission = 0;
+const unsigned long TRANSMISSIONPERIOD = 1000*10;
 
 
 String addParameter(String url, String paramName, String paramValue) {
@@ -106,8 +108,7 @@ void setup() {
   humidityController->setUpperBound(73.0);
   humidityController->defineOutputs(humidifier, 1);
   humidityController->defineBuzzer(puLogger->buzzer);
-//  humidityController->setAlarm(62.0, 73.5, 1000*60*10);
-  humidityController->setAlarm(60.0, 73.5, 1000*10);
+  humidityController->setAlarm(62.0, 73.5, 1000*60*15);
   
   temperatureController = new FeedbackController(false,false,200);
   temperatureController->defineInputs(reinterpret_cast<Sensor**>(puLogger->sensors), SENSORCOUNT,'T');
@@ -126,20 +127,18 @@ void setup() {
 void loop() { 
   humidityController->poll();
   temperatureController->poll();
-  Serial.print("AVG: (");
-  Serial.print(humidityController->getAvgValue());
-  Serial.print("|");
-  Serial.print(temperatureController->getAvgValue());
-  Serial.print(")");
   
-  if(WiFi.status()== WL_CONNECTED){   //Check WiFi connection status
+  if(WiFi.status()!= WL_CONNECTED){   //Check WiFi connection status
+    Serial.println("Error in WiFi connection"); 
+  }
+  else if (millis() - lastTransmission > TRANSMISSIONPERIOD ||
+           millis() < lastTransmission) {
+            
+    lastTransmission = millis();
     submitData(humidityController, submissionUrl);
     submitData(temperatureController, submissionUrl);
   }
   else {
-    Serial.println("Error in WiFi connection");   
+    //idle
   }
-  
-  Serial.println("");
-  delay(1000*10);
 }

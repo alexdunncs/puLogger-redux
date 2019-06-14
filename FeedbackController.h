@@ -54,7 +54,6 @@ class FeedbackController {
   void defineBuzzer(Buzzer* buzzer);
 
   bool existingAlarmState();
-  void soundAlarm();
 	void updateAlarmState(bool valueOutOfBounds);
 	void poll();
   void controlOutputs();

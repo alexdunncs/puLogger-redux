@@ -117,10 +117,6 @@ bool FeedbackController::existingAlarmState() {
   return activeAlarm;
 }
 
-void FeedbackController::soundAlarm() {
-  buzzer->longBeep();
-}
-
 void FeedbackController::updateAlarmState(bool valueOutOfBounds) {
 	if (valueOutOfBounds) {
     bool inRollover = (millis() < inAlarmStateSince);
@@ -131,8 +127,9 @@ void FeedbackController::updateAlarmState(bool valueOutOfBounds) {
     if (existingAlarmState()) {
       if ((millis() - inAlarmStateSince) > gracePeriodMillis ||
           inRollover) {
-            Serial.print("Sounding Alarm\n");
-            soundAlarm();
+            if (millis() / 1000UL % 2UL) { //results in a 50% duty-cycle trill
+              buzzer->beep(); 
+            }
           }
     }
     else {
