@@ -116,7 +116,6 @@ void submitData(FeedbackController** fControllers, String submissionUrl, String 
   Serial.println(payload);    //Print request response payload
 
   http.end();  //Close connection
-  delay(10000);
 }
 
 
