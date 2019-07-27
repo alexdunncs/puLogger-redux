@@ -147,7 +147,7 @@ void setup() {
   temperatureController->setSetpoint(25.0);
   temperatureController->defineOutputs(heater, 1);
   temperatureController->defineBuzzer(puLogger->buzzer);
-  temperatureController->setAlarm(24.0, 29.0, 1000*60*60);
+  temperatureController->setAlarm(24.0, 32.0, 1000*60*60);
 
   while (WiFi.status() != WL_CONNECTED) {  //Wait for the WiFI connection completion
     delay(500);
