@@ -46,7 +46,7 @@ Controller* puLogger = nullptr;
 FeedbackController* temperatureController = nullptr;
 FeedbackController* humidityController = nullptr;
 unsigned long lastTransmission = 0;
-const unsigned long TRANSMISSIONPERIOD = 1000*10;
+const unsigned long TRANSMISSIONPERIOD = 1000*60*15;
 
 
 String addParameter(String url, String paramName, String paramValue) {
