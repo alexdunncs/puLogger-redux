@@ -25,8 +25,6 @@ const char* ssid = "Nacho2G";
 const char* password = "yaNgchInghaOpu'ErchA@$350reMinbi";
 const char* submissionUrl = "http://54.162.202.222/pulogger/submitdata/";
 const char* timestampReqUrl = "http://54.162.202.222/pulogger/requestServerTime/";
-//const char* submissionUrl = "192.168.1.11:8000/pulogger/submitdata/";
-//const char* timestampReqUrl = "192.168.1.11:8000/pulogger/requestServerTime/";
 
 
 
@@ -34,7 +32,7 @@ const char* timestampReqUrl = "http://54.162.202.222/pulogger/requestServerTime/
 String CONTROLLERNAME = "test";
 const uint8_t SENSORCOUNT = 2;
 uint8_t SENSORADDRESSES[SENSORCOUNT] = {0x76, 0x77};
-String SENSORNAMES[SENSORCOUNT] = {"sensor1", "sensor2"};
+String SENSORNAMES[SENSORCOUNT] = {"Top Shelf", "Bottom Shelf"};
 const int FCONTROLLERCOUNT = 2;
 
 //Sensor calibration offsets (value = measurement + offset)
